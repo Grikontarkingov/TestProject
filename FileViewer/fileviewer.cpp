@@ -28,10 +28,11 @@ FileViewer::FileViewer(QWidget *parent)
 
     gridLay->addWidget(treePath, 1, 0, 10, 2);
     treePath->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    connect(treePath, &QTreeView::clicked, this, &FileViewer::openDirectoryFromNavigation);
 
     gridLay->addWidget(listPath, 1, 2, 10, 10);
     listPath->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(listPath, &QListView::doubleClicked, this, &FileViewer::openResoursec);
+    connect(listPath, &QListView::doubleClicked, this, &FileViewer::openResourses);
 
     this->setLayout(gridLay);
     this->setMinimumSize(800, 600);
@@ -118,7 +119,7 @@ void FileViewer::rebuildModelList(QString str)
     }
 }
 
-void FileViewer::openResoursec(const QModelIndex &index)
+void FileViewer::openResourses(const QModelIndex &index)
 {
     QDir dir = currentPathText->toPlainText();
     if(dir.cd(index.data().toString()))
@@ -215,4 +216,26 @@ bool FileViewer::haveDirectory(QString in)
     {
         return true;
     }
+}
+
+void FileViewer::openDirectoryFromNavigation(const QModelIndex &index)
+{
+    QDir dir = getPath(index);
+    currentPathText->setText(dir.path());
+    rebuildModelList(currentPathText->toPlainText());
+}
+
+
+QDir FileViewer::getPath(const QModelIndex &index)
+{
+    QDir path;
+
+    if(index.parent().isValid())
+    {
+        path = getPath(index.parent());
+    }
+
+    path.cd(index.data().toString());
+
+    return path;
 }

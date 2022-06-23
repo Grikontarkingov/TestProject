@@ -8,6 +8,7 @@
 #include <QPushButton>
 #include <QTreeView>
 #include <QListView>
+#include <QDir>
 
 class FileViewer : public QWidget
 {
@@ -17,8 +18,9 @@ public:
     ~FileViewer();
 
 private slots:
-    void openResoursec(const QModelIndex &index);
+    void openResourses(const QModelIndex &index);
     void upLevel();
+    void openDirectoryFromNavigation(const QModelIndex &index);
 
 private:
     void rebuildModelList(QString str);
@@ -27,6 +29,7 @@ private:
     bool haveDirectory(QString in);
     void setNewModelTree(QStandardItemModel* newmodel);
     void setNewModelList(QStandardItemModel* newmodel);
+    QDir getPath(const QModelIndex &index);
 
     QGridLayout* gridLay;
     QStandardItemModel *modelTree;
